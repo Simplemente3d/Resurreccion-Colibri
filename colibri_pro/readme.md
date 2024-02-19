@@ -1,6 +1,6 @@
-#Impresora Colibrí Pro
+# Impresora Colibrí Pro
 
-##Límites
+## Límites
 La impresora tiene un origen en el centro de la cama. Y soporta instrucciones de movimiento hasta los siguientes valores
 
 |Eje| Valor mínimo | Valor Máximo |
