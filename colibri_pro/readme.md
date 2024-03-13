@@ -1,6 +1,33 @@
 # Impresora Colibrí Pro
+Esta impresora se puede usar a través de la herramienta Octoprint y cualquier laminador moderno.
 
-## Límites
+## Prerequisitos
+Dispositivo para instalar Octoprint, este dispositivo debe poderse mantener encendido durante la operación de la impresora.
+Cable USB A Macho a B.
+Instalar laminador Ultimaker Cura. Se pueden usar diferentes laminadores, pero esta guía sólo se enfocará en Cura.
+Nivelación a través del panel de control de la impresora.
+
+## 1. Instalar Octoprint en dispositivo.
+Instalar Octoprint en dispositivo. Guías:
+  - [Raspberry Pi](https://octoprint.org/download/#octopi)
+  - [Mac](https://octoprint.org/download/#installing-manually)
+  - [Windows](https://octoprint.org/download/#windows-installer)
+
+Después de hacer la configuración inicial de Octoprint, conectar el cable USB desde el dispositivo a la Colibrí.
+La opción de conectar debe estár disponible, sin embargo al conectarse debe dar el error:
+*error*
+Para poder conectarse exitosamente, debemos instalar el plugin ["Better GRBL Support"](https://plugins.octoprint.org/plugins/bettergrblsupport/) de Octoprint.
+Al instalarse, la UI cambia y ahora al dar clic en conectar, se debe observar lo siguiente:
+*screenshot*
+
+La impresora se desconecta despues de un tiempo de inactividad, esto es normal.
+
+## 2. Crear Perfil nuevo en Cura
+Cura requiere configuraciones específicas para poder generar gcodes válidos. A estas configuraciones les llamamos perfiles.
+Agregar impresora
+Establecer límites.
+
+### Límites
 La impresora tiene un origen en el centro de la cama. Y soporta instrucciones de movimiento hasta los siguientes valores
 
 |Eje| Valor mínimo | Valor Máximo |
@@ -9,10 +36,37 @@ La impresora tiene un origen en el centro de la cama. Y soporta instrucciones de
 | Y | 80  | -80  |
 | Z | 0   | ?    |
 
+Agregar g-código de inicio:
+```
+G90 ; home and center
+G21 ; set units to mm
+G4 P10; wait for nozzle to heat up
+```
+Agregar g-código final:
+```
+G1 E-1 F300 ;retract
+G91 ; set absolute movement
+G0 Z5 ; pull nozzle up a little
+G0 F7200 X-130 Y-80 ; move head to back corner
+```
+
+### 3. Crear scripts de postprocesamiento
+
+### 4. Laminar prueba
+
+### 5. Imprimir
+Antes de de iniciar la impresión, se debe elegir la temperatura deseada en el panel de control de la impresora dado que la temperatura configurada en el laminador no tiene efecto. Despues de alrededor 5 minutos, la boquilla debe estar a la temperatura deseada. En este momento, nos podemos conectar a la impresora desde Octoprint e iniciar la impresion.
+1. Elegir temperatura.
+2. Permitir que se caliente la boquilla.
+3. Subir archivo gcode a Octoprint.
+4. Clic en conectar.
+5. Clic en imprimir.
+
+# Anexo
+
+## Soporte de códigos G
 Cuando una instrucción de movimiento `G0` o `G1` excede alguno de estos valores, la impresora rechaza la instrucción y causa un traslado al centro de la cama.
 
-# Soporte de códigos
-## Códigos G
 | Gcode|Soportada|Nota |
 |------|:--------|-----|
 | G0 |  ☑️ |  |
@@ -37,7 +91,7 @@ Cuando una instrucción de movimiento `G0` o `G1` excede alguno de estos valores
 | G91-94  | ☑️  |  |
 | G95-G133  | ❎  |  |
 
-## Códigos M
+## Soporte de códigos M
 | Gcode|Soportada|Nota |
 |------|:--------|-----|
 | M0-M1 |  ☑️ | La impresora la acepta, pero no funciona como debería |
@@ -54,6 +108,6 @@ M6-M7 |  ❎ |  |
 | M31-M81 | ❓| |
 | M82  | ❎  |  |
 
-## Código S
+## Soporte de código S
 Los códigos S para control de temperatura, ejemplo `S200`, son aceptados pero no parecen tener efecto.
 
