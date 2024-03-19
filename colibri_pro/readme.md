@@ -2,10 +2,10 @@
 Esta impresora se puede usar a través de la herramienta Octoprint y cualquier laminador moderno.
 
 ## Prerequisitos
-Dispositivo para instalar Octoprint, este dispositivo debe poderse mantener encendido durante la operación de la impresora.
-Cable USB A Macho a B.
-Instalar laminador Ultimaker Cura. Se pueden usar diferentes laminadores, pero esta guía sólo se enfocará en Cura.
-Nivelación a través del panel de control de la impresora.
+ - Dispositivo para instalar Octoprint, este debe poderse mantener encendido durante la operación de la impresora.
+ - Cable USB A Macho a B.
+ - Instalar laminador Ultimaker Cura. Se pueden usar diferentes laminadores, pero esta guía sólo se enfocará en Cura.
+ - Nivelación a través del panel de control de la impresora.
 
 ## 1. Instalar Octoprint en dispositivo.
 Instalar Octoprint en dispositivo. Guías:
@@ -28,7 +28,7 @@ Agregar impresora
 Establecer límites.
 
 ### Límites
-La impresora tiene un origen en el centro de la cama. Y soporta instrucciones de movimiento hasta los siguientes valores
+La impresora tiene un origen en el centro de la cama. Y soporta instrucciones de movimiento hasta los siguientes valores. Si una instrucción de movimiento `G0` o `G1` excede alguno de estos valores, la impresora rechaza la instrucción y causa un traslado al centro de la cama.
 
 |Eje| Valor mínimo | Valor Máximo |
 |---|-----|------|
@@ -51,9 +51,34 @@ G0 F7200 X-130 Y-80 ; move head to back corner
 ```
 
 ### 3. Crear scripts de postprocesamiento
+Algunas instrucciones de la laminación no son soportadas y enviarlas causa que la impresora se detenga totalmente. Para quitarlas del archivo gcode, usamos scripts de postprocesamiento, particularmente el script de "Buscar y Reemplazar" o "Search and Replace"
+  - Ir a Extensiones
+  - Scripts de Postprocesamiento
+  - Agregar las siguientes intstrucciones de Buscar y Reemplazar
+
+|Script| Buscar | Reemplazar |
+|---|-----|------|
+| 1 | `M82` | `;R M82` |
+| 2 | `M104` | `;R M104` |
+| 3 | `M105` | `;R M105` |
+| 4 | `M106` | `;R M106` |
+| 5 | `M107` | `;R M107` |
+| 6 | `M109` | `;R M109` |
+| 7 | `G92` | `;R G92` |
+
+Nota: Usamos la letra como indicador de que la línea fue modificada en postprocesamiento.
+
+Despues de Agragar los scripts se debe tener una indicación visual como siguientes.
+
+### 4. Instalar Plugin Arc Welder
+La Colibrí pro soporta instrucciones de arcos G2 y G3, en lugar de secuencias de movimientos G0 y G1. Los comandos de arco reducen el tamaño del gcode y la carga en el procesamiento que tiene que efectuar la impresora.
+ -  Dar clic en Marketplace
+ -  Buscar "Arc Welder"
+ -  Dar Clic en instalar
+ -  Activar la opción de Arc Welder en las configuraciones de impresión, la sección de "Special Modes".
 
 ### 4. Laminar prueba
-
+Elegir extenssion GCODE para guardar el archivo.
 ### 5. Imprimir
 Antes de de iniciar la impresión, se debe elegir la temperatura deseada en el panel de control de la impresora dado que la temperatura configurada en el laminador no tiene efecto. Despues de alrededor 5 minutos, la boquilla debe estar a la temperatura deseada. En este momento, nos podemos conectar a la impresora desde Octoprint e iniciar la impresion.
 1. Elegir temperatura.
@@ -64,8 +89,11 @@ Antes de de iniciar la impresión, se debe elegir la temperatura deseada en el p
 
 # Anexo
 
+## Impresión desde SD y USB
+La impresión desde SD y USB no ha sido exitosa. Se podría analizar un archivo GCODE creado por el software constructor, para determinar las instrucciones necesarias para iniciar la impresión. Si cuenta con uno, por favor compartirlo a simplemente3dgdl@gmail.com.
+
 ## Soporte de códigos G
-Cuando una instrucción de movimiento `G0` o `G1` excede alguno de estos valores, la impresora rechaza la instrucción y causa un traslado al centro de la cama.
+
 
 | Gcode|Soportada|Nota |
 |------|:--------|-----|
