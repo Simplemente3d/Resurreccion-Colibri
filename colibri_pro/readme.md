@@ -56,26 +56,20 @@ Algunas instrucciones de la laminación no son soportadas y enviarlas causa que 
   - Scripts de Postprocesamiento
   - Agregar las siguientes intstrucciones de Buscar y Reemplazar
 
-|Script| Buscar | Reemplazar |
-|---|-----|------|
-| 1 | `M82` | `;R M82` |
-| 2 | `M104` | `;R M104` |
-| 3 | `M105` | `;R M105` |
-| 4 | `M106` | `;R M106` |
-| 5 | `M107` | `;R M107` |
-| 6 | `M109` | `;R M109` |
-| 7 | `G92` | `;R G92` |
+|Script| Expresión Regular | Buscar | Reemplazar |
+|---|----|--------|-----------|
+| 1 | No | `M82`  | `;R M82`  |
+| 2 | No | `M104` | `;R M104` |
+| 3 | No | `M105` | `;R M105` |
+| 4 | No | `M106` | `;R M106` |
+| 5 | No | `M107` | `;R M107` |
+| 6 | No | `M109` | `;R M109` |
+| 7* | Si | `G92`  | `G0 X0\nG92 X0 E0` |
 
-Nota: Usamos la letra como indicador de que la línea fue modificada en postprocesamiento.
+Usamos la letra `R` como indicador de que la línea fue modificada en postprocesamiento.
+*Ver soporte de códigos G 
 
-Despues de Agragar los scripts se debe tener una indicación visual como siguientes.
-
-### 4. Instalar Plugin Arc Welder
-La Colibrí pro soporta instrucciones de arcos G2 y G3, en lugar de secuencias de movimientos G0 y G1. Los comandos de arco reducen el tamaño del gcode y la carga en el procesamiento que tiene que efectuar la impresora.
- -  Dar clic en Marketplace
- -  Buscar "Arc Welder"
- -  Dar Clic en instalar
- -  Activar la opción de Arc Welder en las configuraciones de impresión, la sección de "Special Modes".
+Despues de agregar los scripts se debe tener una indicación visual como siguientes.
 
 ### 4. Laminar prueba
 Elegir extenssion GCODE para guardar el archivo.
@@ -91,6 +85,9 @@ Antes de de iniciar la impresión, se debe elegir la temperatura deseada en el p
 
 ## Impresión desde SD y USB
 La impresión desde SD y USB no ha sido exitosa. Se podría analizar un archivo GCODE creado por el software constructor, para determinar las instrucciones necesarias para iniciar la impresión. Si cuenta con uno, por favor compartirlo a simplemente3dgdl@gmail.com.
+
+## Soporte de instrucciones de arco G2 y G3
+La impresora soporta arcos, por lo que se puede usar el plugin "Arc Welder" de Cura. Sin embargo, en pruebas la extrusión se veía afectada al cambiar entre instrucciones de arco y líneas.
 
 ## Soporte de códigos G
 
@@ -116,7 +113,9 @@ La impresión desde SD y USB no ha sido exitosa. Se podría analizar un archivo 
 | G80 | ☑️  |  |
 | G81-G89 | ❎  |  |
 | G90  | ☑️  | Un G90 es normalmente un cambio a coordenadas absolutas. En la colibrí esta instrucción causa un _home_, llevar los ejes a 0 y centra la boquilla en la cama. Es posible que esto sea causado por no poder leer/escribir de la EEPROM. Dado que el _home_ normal G28 no funciona, se usa G90 como el la instrucción de _home_. |
-| G91-94  | ☑️  |  |
+| G91  | ☑️  |  |
+| G92  | ☑️  | Falla para E, si no está acompañada de uno de los 3 ejes, X, Y o Z |
+| G93-94  | ☑️  |  |
 | G95-G133  | ❎  |  |
 
 ## Soporte de códigos M
@@ -134,7 +133,7 @@ M6-M7 |  ❎ |  |
 | M23-M29 | ❓| |
 | M30  | ☑️  |  |
 | M31-M81 | ❓| |
-| M82  | ❎  |  |
+| M82-M83  | ❎  |  |
 
 ## Soporte de código S
 Los códigos S para control de temperatura, ejemplo `S200`, son aceptados pero no parecen tener efecto.
