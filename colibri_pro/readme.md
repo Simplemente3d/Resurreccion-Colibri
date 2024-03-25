@@ -49,31 +49,39 @@ G91 ; set absolute movement
 G0 Z5 ; pull nozzle up a little
 G0 F7200 X-130 Y-80 ; move head to back corner
 ```
+###
+Sabor de G-Code
+En la opción de G-Code Flavor seleccionar `Makerbot`. La Colibrí no soporta instrucciones `G92` este sabor genera G-code que no depende de dichas instrucciones.
 
-### 3. Crear scripts de postprocesamiento
+
+## 3. Crear scripts de postprocesamiento
 Algunas instrucciones de la laminación no son soportadas y enviarlas causa que la impresora se detenga totalmente. Para quitarlas del archivo gcode, usamos scripts de postprocesamiento, particularmente el script de "Buscar y Reemplazar" o "Search and Replace"
   - Ir a Extensiones
   - Scripts de Postprocesamiento
   - Agregar las siguientes intstrucciones de Buscar y Reemplazar
 
-|Script| Expresión Regular | Buscar | Reemplazar |
-|---|----|--------|-----------|
-| 1 | No | `M82`  | `;R M82`  |
-| 2 | No | `M104` | `;R M104` |
-| 3 | No | `M105` | `;R M105` |
-| 4 | No | `M106` | `;R M106` |
-| 5 | No | `M107` | `;R M107` |
-| 6 | No | `M109` | `;R M109` |
-| 7* | Si | `G92`  | `G0 X0\nG92 X0 E0` |
+|Script| Buscar | Reemplazar |
+|----|--------|-----------|
+| 1  | `M82`  | `;R M82`  |
+| 2  | `M104` | `;R M104` |
+| 3  | `M105` | `;R M105` |
+| 4  | `M106` | `;R M106` |
+| 5  | `M107` | `;R M107` |
+| 6  | `M109` | `;R M109` |
+| 7  | `M116` | `;R M116` |
+| 8  | `M126` | `;R M126` |
+| 9  | `M127` | `;R M127` |
+| 10 | `G92`  | `;R G92`  |
 
 Usamos la letra `R` como indicador de que la línea fue modificada en postprocesamiento.
 *Ver soporte de códigos G 
 
 Despues de agregar los scripts se debe tener una indicación visual como siguientes.
 
-### 4. Laminar prueba
-Elegir extenssion GCODE para guardar el archivo.
-### 5. Imprimir
+## 4. Laminar prueba
+Laminar archivo de prueba y subir a octoprint.
+
+## 5. Imprimir
 Antes de de iniciar la impresión, se debe elegir la temperatura deseada en el panel de control de la impresora dado que la temperatura configurada en el laminador no tiene efecto. Despues de alrededor 5 minutos, la boquilla debe estar a la temperatura deseada. En este momento, nos podemos conectar a la impresora desde Octoprint e iniciar la impresion.
 1. Elegir temperatura.
 2. Permitir que se caliente la boquilla.
